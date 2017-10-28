@@ -91,19 +91,16 @@ namespace Warpplates
                 {
                     continue;
                 }
-
                 if (!warpplate.IsPublic && !warpplate.AllowedUsers.Contains(player.User?.ID ?? -1) ||
                     !playerMetadata.IsWarpplateAllow)
                 {
                     continue;
                 }
-
                 if (playerMetadata.WarpplateCooldown > 0)
                 {
                     playerMetadata.WarpplateCooldown--;
                     continue;
                 }
-
                 if (playerMetadata.WarpplateDelay < destinationWarpplate.Delay)
                 {
                     var remainingTime = destinationWarpplate.Delay - playerMetadata.WarpplateDelay++;
@@ -348,6 +345,44 @@ namespace Warpplates
             }
         }
 
+        private void OnWarpplateResize(CommandArgs args)
+        {
+            if (!args.Player.HasPermission("warpplates.resize"))
+            {
+                args.Player.SendErrorMessage("You do not have permission to resize warpplates.");
+                return;
+            }
+
+            if (args.Parameters.Count != 4)
+            {
+                args.Player.SendErrorMessage(
+                    $"Invalid syntax! Proper syntax: {Commands.Specifier}warpplate resize <warpplate name> <width> <height>");
+                return;
+            }
+
+            var warpplateName = args.Parameters[1];
+            var warpplate = _warpplateManager.Get(warpplateName);
+            if (warpplate == null)
+            {
+                args.Player.SendErrorMessage($"Invalid warpplate '{warpplateName}'.");
+            }
+            else if (!int.TryParse(args.Parameters[2], out var width) ||
+                     !int.TryParse(args.Parameters[3], out var height))
+            {
+                args.Player.SendErrorMessage("Invalid dimensions.");
+            }
+            else if (width > _warpplatesConfig.MaxWarpplateWidth || height > _warpplatesConfig.MaxWarpplateHeight)
+            {
+                args.Player.SendErrorMessage($"The new dimensions are too big. The maximum size is {width}x{height}.");
+            }
+            else
+            {
+                warpplate.Area = new Rectangle(warpplate.Area.X, warpplate.Area.Y, width, height);
+                _warpplateManager.Update(warpplate);
+                args.Player.SendSuccessMessage($"Set warpplate '{warpplateName}' size to {width}x{height}.");
+            }
+        }
+
         private void OnWarpplateSet(CommandArgs args)
         {
             if (!args.Player.RealPlayer)
@@ -491,6 +526,9 @@ namespace Warpplates
                     break;
                 case "listallowed":
                     OnWarpplateListAllowed(args);
+                    break;
+                case "resize":
+                    OnWarpplateResize(args);
                     break;
                 case "set":
                     OnWarpplateSet(args);

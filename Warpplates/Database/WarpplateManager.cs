@@ -168,8 +168,9 @@ namespace Warpplates.Database
         public void Update(Warpplate warpplate)
         {
             _connection.Query(
-                "UPDATE Warpplates SET Tag = @0, Delay = @1, Destination = @2, IsPublic = @3 WHERE WorldId = @4 AND Name = @5",
-                warpplate.Tag, warpplate.Delay, warpplate.DestinationWarpplate, warpplate.IsPublic, warpplate.WorldId,
+                "UPDATE Warpplates SET Width = @0, Height = @1, Tag = @2, Delay = @3, Destination = @4, IsPublic = @5 WHERE WorldId = @6 AND Name = @7",
+                warpplate.Area.Width, warpplate.Area.Height, warpplate.Tag, warpplate.Delay,
+                warpplate.DestinationWarpplate, warpplate.IsPublic, warpplate.WorldId,
                 warpplate.Name);
             _connection.Query("DELETE FROM WarpplateIsAllowed WHERE WorldId = @0 AND Warpplate = @1", warpplate.WorldId,
                 warpplate.Name);

@@ -9,9 +9,21 @@ namespace Warpplates
     public sealed class WarpplatesConfiguration
     {
         /// <summary>
-        ///     Gets the value indicating how many seconds need to pass until a player may use a warpplate again.
+        ///     Gets a value that defines the maximum warpplate height.
         /// </summary>
-        [JsonProperty("warpplate_cooldown")]
+        [JsonProperty("max_warpplate_height", Order = 3)]
+        public int MaxWarpplateHeight { get; } = 5;
+
+        /// <summary>
+        ///     Gets a value that defines the maximum warpplate width.
+        /// </summary>
+        [JsonProperty("max_warpplate_width", Order = 2)]
+        public int MaxWarpplateWidth { get; } = 5;
+
+        /// <summary>
+        ///     Gets a value indicating how many seconds need to pass until a player may use a warpplate again.
+        /// </summary>
+        [JsonProperty("warpplate_cooldown", Order = 1)]
         public int WarpplateCooldown { get; } = 5;
 
         /// <summary>
